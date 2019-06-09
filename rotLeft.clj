@@ -1,9 +1,6 @@
 
-(defn rotLefti  [a d]
-  (if (= d 0) a (recur (let [x (first a)
-                             xs (rest a)
-                             rot (conj (vec xs) x)]
-                         rot)  (dec d))))
+(defn rotLefti  [a d] (let [x (split-at d a)] (concat  (second x) (first x))))
+
 (defn rotLeft  [a d] (let [len (count a)
                            rm (mod d len)
                            qou (quot d len)] (rotLefti a rm)))
