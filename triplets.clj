@@ -11,7 +11,6 @@
   (r/fold (r/monoid #(inc-map-by (inc-v %1 %2) %1 %2)  (constantly m)) ks))
 
 (defn in-series? [x r]
-  (if-not (number? x) (println "****" x))
   (or (= x 1) (= (rem x r) 0)))
 
 (defn doublet [m x r]
