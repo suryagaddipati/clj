@@ -9,16 +9,14 @@
 ; (x [1 2 1 3 1 2 4])
 
 (def x (fn [& funs] 
-         (fn [& args] (loop [fns (reverse funs) result args]
-                        (if (nil? (first fns) )result  (recur (rest fns) [ (apply (first fns) result)])))))) 
-               
-           
-
-
-           
-
+         (fn [& args] 
+           (first(loop [fns (reverse funs) result args]
+                  (if (nil? (first fns) )result  
+                    (recur (rest fns) [ (apply (first fns) result)])))))))
             
-           
+; ( (x rest reverse) [1 2 3 4])
 
-( (x rest reverse) [1 2 3 4])
 
+(def x #(for [x (range (quot (count %2)  %1))] (for [y (range (* x %1 ) (* x (inc %1)  ))] y)))
+
+(x 3 (range 9))
