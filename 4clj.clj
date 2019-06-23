@@ -7,4 +7,15 @@
 
 (def k (fn [s] (sort #(compare (clojure.string/lower-case %1) (clojure.string/lower-case %2))  (re-seq #"\w+" s))))
 ; (def k (fn [s] (sort #(compare %1 %2)  (re-seq #"\w+" s))))
-(k "Have a nice day.")
+; (k "Have a nice day.")
+
+; (defn ana [xs] ())
+;k (ana ["meat"  "mat"  "team"  "mate"  "eat"])
+
+(def x (fn [n b]
+         (loop [result []
+                number n]
+           (if (= (quot number b) 0) (into [(rem number b)] result)
+               (recur (into [(rem number b)] result) (quot number b))))))
+
+(x 1234501 10)
