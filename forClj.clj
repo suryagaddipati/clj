@@ -17,6 +17,6 @@
 ; ( (x rest reverse) [1 2 3 4])
 
 
-(def x #(for [x (range (quot (count %2)  %1))] (for [y (range (* x %1 ) (* x (inc %1)  ))] y)))
+(def x #(for [x (range (quot (count %2)  %1))] (for [y (range (* x %1 ) (* %1 (inc x)  ))] y)))
 
 (x 3 (range 9))
