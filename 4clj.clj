@@ -18,4 +18,4 @@
            (if (= (quot number b) 0) (into [(rem number b)] result)
                (recur (into [(rem number b)] result) (quot number b))))))
 
-(x 1234501 10)
+; (x 1234501 10)
