@@ -43,7 +43,7 @@
                   fRestArgs (first restArgs)
                   restRestArgs (rest restArgs)
                   rotatedArgs (conj (vec restRestArgs)  fRestArgs)]
-              (cons calc (apply m calc rotatedArgs))))))  
+              (cons (first args) (apply m calc rotatedArgs))))))  
              
 
           
