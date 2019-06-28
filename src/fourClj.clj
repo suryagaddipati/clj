@@ -49,6 +49,18 @@
           
 
 ; (take 3 ( x 3.14 int double))
-(take 5 (x 3 #(- % 3) #(+ 5 %)))
+; (take 5 (x 3 #(- % 3) #(+ 5 %)))
+
+(def x (fn [xs] (for [x xs] 
+                  (map  #(loop [out %] 
+                          (if-not (sequential? (first out)) 
+                           out 
+                           (recur (first out)))) 
+                       x)
+                  )))
+
+; (def x (fn [xs] (for [x xs] 
+;                   (map  #(loop [out %]  out ) x))))
+(x '((1 2) ((3 4) ((((5 6)))))))
 
   
