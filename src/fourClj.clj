@@ -1,4 +1,3 @@
-(ns fourClj)
      
 
 (defn rr [xs x]) 
@@ -51,16 +50,61 @@
 ; (take 3 ( x 3.14 int double))
 ; (take 5 (x 3 #(- % 3) #(+ 5 %)))
 
-(def x (fn [xs] (for [x xs] 
-                  (map  #(loop [out %] 
+(def x (fn k [xs] (map  #(loop [out %] 
                           (if-not (sequential? (first out)) 
                            out 
-                           (recur (first out)))) 
-                       x)
-                  )))
+                           (recur (first out)))) xs))) 
+;; (defn pp [x] (do (println x) x))                  
 
-; (def x (fn [xs] (for [x xs] 
-;                   (map  #(loop [out %]  out ) x))))
-(x '((1 2) ((3 4) ((((5 6)))))))
+(def x (fn [xs] 
+          (letfn [(flat [x]
+                        (loop [out x] 
+                          ( if-not (sequential? (first out))   
+                            out
+                           (recur (first out)))))] 
+            (reduce #(conj  %1   (flat %2)   ) []  xs))))
 
-  
+
+;; (x '((1 2) ((3 4) ((((5 6)))))))
+
+(def x (fn [& sequs]
+         (loop [sqs sequs]
+           (if (every? #(= (first %) (first (first sqs))) sqs)
+             (first(first sqs))
+             (let [sorted-sqs (sort-by first sqs)
+                   smallest (first (first sorted-sqs))
+                   [all-small-sqs all-big-sqs] (partition-by #(= (first %) smallest) sorted-sqs) ]
+               (recur (concat all-big-sqs (map rest all-small-sqs) ))
+               )))))
+
+;; (x [3 4 5])
+;; (x [1 2 3 4 5 6 7] [0.5 3/2 4 19])
+
+(def x (fn [n-in pred arr]
+         (loop [n n-in
+                xs arr
+                out []]
+           (if (and (= n 1) (pred (first xs)) ) out 
+               (let [f (first xs)
+                     fs (rest xs)
+                     is-match (pred f)
+                     new-N (if is-match (dec n) n)]
+                 (recur new-N fs (conj out f)))))))
+
+(x 4 #(= 2 (mod % 3))
+    [2 3 5 7 11 13 17 19 23])
+(x 3 #(some #{\i} %)
+    ["this" "is" "a" "sentence" "i" "wrote"])
+
+(def x (fn [pred ins xs]
+         (let [pairs (partition 2 1 [] xs)]
+           (reduce #(if (< (count %2) 2) (concat %1 %2)
+                        (if (apply pred %2)
+                          (conj %1 (first %2) ins  )
+                          (conj %1 (first %2)))) [] pairs))))
+(x < :less [1 6 7 4 3])
+
+
+;; (->> [0 1]
+;;      (iterate (fn [[a b]] [b (+ a b)]))
+;;      (map first))
