@@ -96,12 +96,20 @@
 (x 3 #(some #{\i} %)
     ["this" "is" "a" "sentence" "i" "wrote"])
 
+;; (def x (fn [pred ins xs]
+;;          (let [pairs (partition 2 1 [] xs)]
+;;            (reduce #(if (< (count %2) 2) (concat %1 %2)
+;;                         (if (apply pred %2)
+;;                           (conj %1 (first %2) ins  )
+;;                           (conj %1 (first %2)))) [] pairs))))
 (def x (fn [pred ins xs]
          (let [pairs (partition 2 1 [] xs)]
-           (reduce #(if (< (count %2) 2) (concat %1 %2)
-                        (if (apply pred %2)
-                          (conj %1 (first %2) ins  )
-                          (conj %1 (first %2)))) [] pairs))))
+           (mapcat #(if (=(count % ) 1) %
+                        (let [f (first %)
+                              s (second %)]
+                          (if (pred f s) [f ins ] [f ])) )
+                   pairs)
+           )))
 (x < :less [1 6 7 4 3])
 
 
