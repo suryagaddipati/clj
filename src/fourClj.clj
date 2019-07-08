@@ -146,26 +146,38 @@
 ;; (x [1 2 3])
 ;; (x #{1 :a})
 (seq [])
-(defn is-anagram [x y]
-  (let [xmap (reduce #(assoc %1 %2  (inc (get %1 %2 0))) {} x)
-        ymap (reduce #(let [val (get %1 %2 0)]
-                        (if (= val 1)
-                          (dissoc %1 %2)
-                          (assoc %1 %2 (dec val) )))
-                     xmap  y) ]
-    (empty? ymap)))
+;; (is-anagram [x y]
+;;   (let [xmap (reduce #(assoc %1 %2  (inc (get %1 %2 0))) {} x)
+;;         ymap (reduce #(let [val (get %1 %2 0)]
+;;                         (if (= val 1)
+;;                           (dissoc %1 %2)
+;;                           (assoc %1 %2 (dec val) )))
+;;                      xmap  y) ]
+;;     (empty? ymap)))
 (def x (fn [in]
-         (loop [xs in anas []]
-           (if-not (seq xs) anas
-                   (let [y (first xs)
-                         ys (rest xs)
-                         yAnas (first (vals (group-by #(is-anagram y %) xs)))
-                         nAnas (if (> (count yAnas) 1) (conj anas yAnas ) anas) ]
-                     #break
-                     (recur ys nAnas))))))
+         (letfn [(is-anagram [x y]
+                   (let [xmap (reduce #(assoc %1 %2  (inc (get %1 %2 0))) {} x)
+                         ymap (reduce #(let [val (get %1 %2 0)]
+                                         (if (= val 1)
+                                           (dissoc %1 %2)
+                                           (assoc %1 %2 (dec val) )))
+                                      xmap  y) ]
+                     (empty? ymap)))]
+           (loop [xs in anas #{}]
+                    (if-not (seq xs) anas
+                            (let [y (first xs)
+                                  ys (rest xs)
+                                  {yAnas true noAnas false}  (group-by #(is-anagram y %) xs)
+                                  nAnas (if (> (count yAnas) 1) (conj anas (set yAnas )) anas) ]
+                              #break
+                              (recur noAnas nAnas)))))))
 
 (x ["meat"  "mat" "team" "mate" "eat"])
 ;; (println "dasf")
 
-(is-anagram "meat" "mate")
+;; (is-anagram "meat" "mate")
+
+(def x (fn [in](let [xs (map #(Integer/parseInt %) (clojure.string/split in #","))
+                     filtered (filter #(integer? (rationalize (Math/sqrt %))) xs)](clojure.string/join "," filtered)) ))
+(x "4,5,6,7,8,9")
 
