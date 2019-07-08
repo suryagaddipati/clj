@@ -12,8 +12,9 @@
 
 ;; (longest-repeating "ABAB" 2)
 (longest-repeating "AAABCCCBDDKK")
+
 (defn replace-first [xs x] (conj (rest xs) x))
-(replace-first "abc" \k)
+
 (defn longest-repeating-replacement
   ([str repCount] (longest-repeating-replacement str repCount 1))
   ([str repCount longest]
