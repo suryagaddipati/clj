@@ -30,3 +30,18 @@
                              (if(> nextL  thisLongest) nextL thisLongest) ))))))))
 
 (longest-repeating-replacement "AABABBA" 1)
+
+(defn is-palindrome [s]
+  (if-not  (seq s) true
+           (if (= (first s) (last s))
+             (recur (butlast (rest s)))
+             false)))
+
+(defn  longest-palindrome [s]
+  (if-not (seq s) nil
+    (let [longest-s (if (is-palindrome s) s (longest-palindrome (butlast s)))
+          longest-rest (longest-palindrome (rest s))]
+      (apply str (if (> (count longest-rest)  (count longest-s)) longest-rest longest-s )) )))
+
+(longest-palindrome "cbbd")
+
