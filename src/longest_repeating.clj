@@ -18,9 +18,7 @@
 (defn longest-repeating-replacement
   ([str repCount] (longest-repeating-replacement str repCount 1))
   ([str repCount longest]
-   (loop [str str
-          cnt repCount
-          longest longest]
+   (loop [str str cnt repCount longest longest]
      (if-not (seq str) longest
              (let [x (first str) xs (rest str) fxs (first xs)]
                (if-not fxs longest
