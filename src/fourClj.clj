@@ -205,6 +205,7 @@
 ;;      '{a 1 b 8})
 
 
-(def x (fn [xs])(reduce  #()  [] xs ))
+(def x (fn [xs]))
 
-(x [1 2 3])
+
+(x 89098)
