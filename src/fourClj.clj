@@ -172,12 +172,39 @@
                               #break
                               (recur noAnas nAnas)))))))
 
-(x ["meat"  "mat" "team" "mate" "eat"])
+;; (x ["meat"  "mat" "team" "mate" "eat"])
 ;; (println "dasf")
 
 ;; (is-anagram "meat" "mate")
 
 (def x (fn [in](let [xs (map #(Integer/parseInt %) (clojure.string/split in #","))
                      filtered (filter #(integer? (rationalize (Math/sqrt %))) xs)](clojure.string/join "," filtered)) ))
-(x "4,5,6,7,8,9")
+;; (x "4,5,6,7,8,9")
 
+(def x (fn kn [exp]
+         (fn[m]
+           (let [ k (fn [ x args]   (case x
+                                     / (apply / args)
+                                     + (apply + args)
+                                     - ( apply - args)
+                                     * (apply * args)))
+
+                 lookup-arg (fn[arg](if (seq? arg) ((kn arg) m)  (if (symbol? arg)(get m arg) arg)))
+                 fun (first exp)
+                 ] (k fun (map lookup-arg (rest exp)))))))
+
+
+;; (map (x '(* (+ 2 a)
+;;              (- 10 b)))
+;;      '[{a 1 b 8}
+;;        {b 5 a -2}
+;;        {a 2 b 11}])
+
+;; ((x '(* (+ 2 a)
+;;             (- 10 b)))
+;;      '{a 1 b 8})
+
+
+(def x (fn [xs])(reduce  #()  [] xs ))
+
+(x [1 2 3])
