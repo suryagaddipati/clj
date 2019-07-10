@@ -216,4 +216,10 @@
            (= (sum half1)(sum  half2)))))
 
 
-(x 89098)
+;; (x 89098)
+
+(def x (fn [x] (let [[x & xs](clojure.string/split x #"-")]
+                (apply str  (into [x] (map clojure.string/capitalize xs))))
+         ))
+
+  (x "multi-word-key")
