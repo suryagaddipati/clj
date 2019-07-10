@@ -205,7 +205,15 @@
 ;;      '{a 1 b 8})
 
 
-(def x (fn [xs]))
+(def x (fn [x]
+         (let [xs (seq (str x))
+               c (count xs)
+               toInt #(Integer/parseInt (str %))
+               sum #(reduce + %)
+               halfC (quot c 2)
+               half1 (map toInt(take halfC xs))
+               half2  (map toInt(drop (if (even? c)halfC (inc halfC)) xs))]
+           (= (sum half1)(sum  half2)))))
 
 
 (x 89098)
