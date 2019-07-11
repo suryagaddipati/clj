@@ -160,38 +160,37 @@
                          ymap (reduce #(let [val (get %1 %2 0)]
                                          (if (= val 1)
                                            (dissoc %1 %2)
-                                           (assoc %1 %2 (dec val) )))
-                                      xmap  y) ]
+                                           (assoc %1 %2 (dec val))))
+                                      xmap  y)]
                      (empty? ymap)))]
            (loop [xs in anas #{}]
-                    (if-not (seq xs) anas
-                            (let [y (first xs)
-                                  ys (rest xs)
-                                  {yAnas true noAnas false}  (group-by #(is-anagram y %) xs)
-                                  nAnas (if (> (count yAnas) 1) (conj anas (set yAnas )) anas) ]
-                              #break
-                              (recur noAnas nAnas)))))))
+             (if-not (seq xs) anas
+                     (let [y (first xs)
+                           ys (rest xs)
+                           {yAnas true noAnas false}  (group-by #(is-anagram y %) xs)
+                           nAnas (if (> (count yAnas) 1) (conj anas (set yAnas)) anas)]
+                       #break
+                        (recur noAnas nAnas)))))))
 
 ;; (x ["meat"  "mat" "team" "mate" "eat"])
 ;; (println "dasf")
 
 ;; (is-anagram "meat" "mate")
 
-(def x (fn [in](let [xs (map #(Integer/parseInt %) (clojure.string/split in #","))
-                     filtered (filter #(integer? (rationalize (Math/sqrt %))) xs)](clojure.string/join "," filtered)) ))
+(def x (fn [in] (let [xs (map #(Integer/parseInt %) (clojure.string/split in #","))
+                      filtered (filter #(integer? (rationalize (Math/sqrt %))) xs)] (clojure.string/join "," filtered))))
 ;; (x "4,5,6,7,8,9")
 
 (def x (fn kn [exp]
-         (fn[m]
-           (let [ k (fn [ x args]   (case x
-                                     / (apply / args)
-                                     + (apply + args)
-                                     - ( apply - args)
-                                     * (apply * args)))
+         (fn [m]
+           (let [k (fn [x args]   (case x
+                                    / (apply / args)
+                                    + (apply + args)
+                                    - (apply - args)
+                                    * (apply * args)))
 
-                 lookup-arg (fn[arg](if (seq? arg) ((kn arg) m)  (if (symbol? arg)(get m arg) arg)))
-                 fun (first exp)
-                 ] (k fun (map lookup-arg (rest exp)))))))
+                 lookup-arg (fn [arg] (if (seq? arg) ((kn arg) m)  (if (symbol? arg) (get m arg) arg)))
+                 fun (first exp)] (k fun (map lookup-arg (rest exp)))))))
 
 
 ;; (map (x '(* (+ 2 a)
@@ -211,15 +210,22 @@
                toInt #(Integer/parseInt (str %))
                sum #(reduce + %)
                halfC (quot c 2)
-               half1 (map toInt(take halfC xs))
-               half2  (map toInt(drop (if (even? c)halfC (inc halfC)) xs))]
-           (= (sum half1)(sum  half2)))))
+               half1 (map toInt (take halfC xs))
+               half2  (map toInt (drop (if (even? c) halfC (inc halfC)) xs))]
+           (= (sum half1) (sum  half2)))))
 
 
 ;; (x 89098)
 
-(def x (fn [x] (let [[x & xs](clojure.string/split x #"-")]
-                (apply str  (into [x] (map clojure.string/capitalize xs))))
-         ))
 
-  (x "multi-word-key")
+(def x (fn [x] (let [[x & xs] (clojure.string/split x #"-")]
+                 (apply str  (into [x] (map clojure.string/capitalize xs))))))
+
+  ;; (x "multi-word-key")
+
+
+(def x  (fn [x]
+          (= x 
+             (reduce #(if (=(rem x %2) 0) (+ %2 %1) %1) 0 (range 1 (inc (quot x 2)))))))
+
+(x 496)
