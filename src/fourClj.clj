@@ -225,7 +225,90 @@
 
 
 (def x  (fn [x]
-          (= x 
-             (reduce #(if (=(rem x %2) 0) (+ %2 %1) %1) 0 (range 1 (inc (quot x 2)))))))
+          (= x
+             (reduce #(if (= (rem x %2) 0) (+ %2 %1) %1) 0 (range 1 (inc (quot x 2)))))))
 
-(x 496)
+;; (x 496)
+
+(def x (fn m
+         ([fun  xs]
+          (m fun (first xs) (rest xs)))
+         ([fun x xs]
+          (m fun x xs true))
+         ([fun x xs isFirst]
+          (if (empty? xs) nil
+              (lazy-seq
+               (let [fnr (fun x (first xs))
+                     x  (if isFirst x fnr)
+                     xs (if isFirst xs (rest xs))]
+                 (cons x (m fun  x xs false))))))))
+
+
+;; (reduce #(conj %1 (fun (last %1) %2))  [x]  xs)
+
+
+;; (x conj [1] [2 3 4])
+;; (take 5(x + (range)))
+
+
+(def x (fn [fun & maps]
+         (letfn [(app [a b] (if (and a b) (fun a b) (or a b)))
+                 (merge  [a b]
+                   (let [keys (into (keys a) (keys b))]
+                     (reduce #(assoc %1 %2 (app (get a %2) (get b %2))) {} keys)))]
+           (reduce merge  maps))))
+
+;; (x * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5})
+
+
+(def x (fn k [n xs]
+         (letfn [(merge [v xs x] (into xs (conj x v)))]
+           (if (= n 0) #{nil}
+               (let [prevSet (k (dec n) xs)]
+                 (reduce (fn [xs x]
+                           (conj xs (reduce (partial merge x)#{} prevSet)))
+                         #{} xs))))))
+
+;; (x 2 #{0 1 2})
+
+
+
+(def x (fn k
+         ([n ](k n 0))
+         ([n cnt]
+          (let [ toInt #(Integer/parseInt (str %))
+                sumSqs (reduce + (map #(* % %)  ( map toInt (seq (str n))))) ]
+            (if (= Integer/MAX_VALUE cnt) false
+                (if(= 1 sumSqs) true (recur sumSqs (inc cnt))))))))
+
+;; (x 986543210)
+
+(def x (fn [st]
+         (empty?
+          (let [ps {\( \) \[ \] \{ \}}
+                brackets (into (keys ps) (vals ps))
+                st (filter #(contains? (set brackets) %) st)]
+            (reduce  #(if (= %2  (get ps  (last %1)))
+                        (vec (butlast %1))
+                        (conj %1 %2))
+                     [] st)))))
+
+;; (x "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
+;; (x "[ { {   } []")
+;; (x " [This string has no brackets.")
+
+(def x (fn [ & sets]
+         (letfn [(sums
+                   ([xs] (sums xs []))
+                   ([xs out]
+                    (if (empty? xs) out
+                        (let [ x (first xs)
+                              prevSums (sums (rest xs) out)
+                              xSums (map #(+ x %) prevSums) ]
+                          (into (conj xSums x) prevSums)))))]
+           (let [alSums (map #(set (sums %)) sets)]
+             (not (empty?(reduce  clojure.set/intersection  alSums)))))))
+
+(x #{-1 1 99} 
+    #{-2 2 888}
+    #{-3 3 7777})
