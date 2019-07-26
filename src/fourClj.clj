@@ -463,16 +463,70 @@
                   nxt  (+ x inc-val)]
               (lazy-seq (cons x (m nxt))))) 0))
 
-((fn [n]))
+((fn [n]
+   (let [lst3 (take-last 3
+                             (first
+                              (take 1
+                                    (drop-while #(<= (last %) n)
+                                                ((fn k [prev]
+                                                   (let [n (last prev)
+                                                         nxt (if (= n 2) 3
+                                                                 (loop [nxt (+ n 2)]
+                                                                   (if (every? #(not= 0 (rem  nxt %)) prev)
+                                                                     nxt
+                                                                     (recur (+ nxt 2)))))]
+                                                     (lazy-seq (cons prev (k (conj prev nxt))))))  [2])))))]
+     (if (= (second lst3 ) n) (= (second lst3) (/ (+ (first lst3) (last lst3)) 2))  false))) 5)
 
-(first 
- (take 1
-       (drop-while #(< (last %) 15)   ((fn k [prev]
-                                         (let [n (last prev)
-                                               nxt (if (= n 2) 3
-                                                       (loop [nxt (+ n 2)]
-                                                         (if (every? #(not= 0 (rem  nxt %)) prev)
-                                                           nxt
-                                                           (recur (+ nxt 2)))))]
-                                           (lazy-seq (cons prev (k (conj prev nxt))))))  [2]))))
+((fn[xs]
+   (reduce (fn [xs s] (assoc xs (first s) (rest s))) {}
+    (reduce #(if (keyword %2)
+               (conj (vec %1) [%2]) (let [lst (last %1)
+                                          bt-lst(butlast %1)]
+                                      (conj (vec bt-lst) (conj lst %2)))) [] xs)))
+ [:a 1 2 3 :b :c 4])
 
+((fn k[xs]
+   (reduce #(if (sequential? (first %2))
+              (into %1 (k %2))
+              (conj %1 %2)) [] xs))  [[[[:a :b]]] [[:c :d]] [:e :f]])
+
+((fn k[n]
+   (let [rep (fn[s n] (clojure.string/join(repeat n s)))]
+     (loop [n n
+            out ""]
+       (cond
+
+         (>  (quot n 1000) 0) (recur (rem n 1000)(str out (rep "M" (quot n 1000)) ))
+         (>  (quot n 100) 0) (recur (rem n 100)(str out (case (quot n 100)
+                                                         1 "C"
+                                                         2  "CC"
+                                                         3 "CCC"
+                                                         4 "CD"
+                                                         5 "D"
+                                                         6 "DC"
+                                                         7 "DCC"
+                                                         8 "DCCC"
+                                                         9 "CM") ))
+         (>  (quot n 10) 0) (recur (rem n 10 )(str out (case (quot n 10)
+                                                         1 "X"
+                                                         2  "XX"
+                                                         3 "XXX"
+                                                         4 "XL"
+                                                         5 "L"
+                                                         6 "LX"
+                                                         7 "LXX"
+                                                         8 "LXXX"
+                                                         9 "XC") ))
+         (< n 10) (str out (case n
+                             0 ""
+                             1 "I"
+                             2 "II"
+                             3 "III"
+                             4 "IV"
+                             5 "V"
+                             6 "VI"
+                             7 "VII"
+                             8 "VIII"
+                             9 "IX"))
+         )))) 3999)
