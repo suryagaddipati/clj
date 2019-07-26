@@ -266,20 +266,19 @@
            (if (= n 0) #{nil}
                (let [prevSet (k (dec n) xs)]
                  (reduce (fn [xs x]
-                           (conj xs (reduce (partial merge x)#{} prevSet)))
+                           (conj xs (reduce (partial merge x) #{} prevSet)))
                          #{} xs))))))
 
 ;; (x 2 #{0 1 2})
 
 
-
 (def x (fn k
-         ([n ](k n 0))
+         ([n] (k n 0))
          ([n cnt]
-          (let [ toInt #(Integer/parseInt (str %))
-                sumSqs (reduce + (map #(* % %)  ( map toInt (seq (str n))))) ]
+          (let [toInt #(Integer/parseInt (str %))
+                sumSqs (reduce + (map #(* % %)  (map toInt (seq (str n)))))]
             (if (= Integer/MAX_VALUE cnt) false
-                (if(= 1 sumSqs) true (recur sumSqs (inc cnt))))))))
+                (if (= 1 sumSqs) true (recur sumSqs (inc cnt))))))))
 
 ;; (x 986543210)
 
@@ -297,18 +296,183 @@
 ;; (x "[ { {   } []")
 ;; (x " [This string has no brackets.")
 
-(def x (fn [ & sets]
+(def x (fn [& sets]
          (letfn [(sums
                    ([xs] (sums xs []))
                    ([xs out]
                     (if (empty? xs) out
-                        (let [ x (first xs)
+                        (let [x (first xs)
                               prevSums (sums (rest xs) out)
-                              xSums (map #(+ x %) prevSums) ]
+                              xSums (map #(+ x %) prevSums)]
                           (into (conj xSums x) prevSums)))))]
            (let [alSums (map #(set (sums %)) sets)]
-             (not (empty?(reduce  clojure.set/intersection  alSums)))))))
+             (not (empty? (reduce  clojure.set/intersection  alSums)))))))
 
-(x #{-1 1 99} 
-    #{-2 2 888}
-    #{-3 3 7777})
+;; (x #{-1 1 99} 
+;;     #{-2 2 888}
+;;     #{-3 3 7777})
+
+(def x (fn k [n]
+         (if (= n 0) #{""}
+             (reduce #(conj %1  (str "()" %2)
+                            (str "(" %2 ")")
+                            (str %2 "()")) #{}  (k (dec n))))))
+
+;; (count)
+
+
+;; (x 4)
+
+;; (def x )
+(def x  (fn k [x]
+          (let [x   (map #(Integer/parseInt (str %)) (vec (str x)))]
+            (case (count x)
+              1 x
+              2 (let [[f l] x] (if (= f l) x (if (> f l) [f f] [l l])))
+              (let [f (first x)
+                    l (last x)
+                    rest (rest (butlast x))
+                    jj (k (str f l))]
+                jj)))))
+
+
+;; (take 16 (__ 162)
+;; (x 162)
+
+
+(def x (fn [fun & args]
+         (loop [ret  (apply fun args)]
+           (if (fn? ret) (recur (ret))  ret))))
+
+;; (letfn [(triple [x] #(sub-two (* 3 x)))
+;;         (sub-two [x] #(stop?(- x 2)))
+;;         (stop? [x] (if (> x 50) x #(triple x)))]
+;;   (x triple 2))
+
+(def x (fn k
+         ([fun x y s t]  (take s (map #(take t %) (k fun x y))))
+         ([fun] (k fun 0 0))
+         ([fun x y]
+          (lazy-seq
+           (cons
+            (let [k2 (fn k3 [fun x y] (lazy-seq
+                                       (cons
+                                        (fun x y)
+                                        (k3 fun x (inc y)))))]
+              (k2 fun x y))
+            (k fun (inc x) y))))))
+
+
+;; (take 5 (map #(take 7 %) (x * 3 5)))
+
+;; (take 5 (x str))
+
+;; (x * 3 5 5 7)
+
+;; (k [n]
+;;    (if (= n 2) [2 3]
+;;        (let [prev (k (dec n))
+;;              n (loop [nxt (+ (last prev) 2)]
+;;                  (if (every? #(not= 0 (rem  nxt %)) prev) nxt (recur (+ nxt 2))))]
+;;          (conj prev n))))
+
+
+(def x (fn [n]
+         (letfn [(ap [n fun] (let [isPrime (memoize esp)]
+                               (loop [n (fun n 2)]
+                                 (if (isPrime n) n (recur (fun n 2))))))
+
+                 (primesLessThan [n] (let [isPrime (memoize esp)] (filter isPrime (range 2 n))))
+
+                 ;; (primesLessThan [n] (memoize (plth n)))
+
+                 (esp [n] (cond
+                            (= n 2) true
+                            (= n 3) true
+                            (even? n) false
+                            :else  (every? #(not= 0 (rem  n %)) (primesLessThan n))))
+                 (avg [x y] (/ (+ x y) 2))]
+           (= n (avg (ap n +) (ap n -))))))
+
+(map x [5 53 54 55])
+
+
+;; (x 5)
+
+;; (def x (fn [n]
+;;          (if (= n 1) 1
+;;              (let [gcd (fn [a b] (cond (= a b) a
+;;                                        (= a 0) b
+;;                                        (= b 0) a
+;;                                        (> a b) (recur (- a b) b)
+;;                                        :else (recur  b (-  b a))))]
+;;                (reduce #(if (= (gcd %2 n) 1) (inc %1) %1) 0 (range 1 n))))))
+
+;; (x 40)
+
+;; loop [first-h  nil
+;;       last-h   %1
+;;       found false]
+;; (if found  (conj first-h last-h)
+;;     (if (empty? last-h)
+;;       (conj first-h [%2 %2])
+;;       (let [f-last-h (first last-h)
+;;             xs-last-h (rest last-h)
+;;             int-start (first f-last-h)
+;;             int-end (second f-last-h)
+;;             exp (if (or (%2)))  
+;;             ]
+;;         (recur (conj (vec first-h) f-last-h) xs-last-h false))))
+
+
+((fn [xs]
+   (reduce (fn [xs x]
+             (let [lst (last xs)]
+               (if (nil? lst) (conj xs [x x])
+                   (let [lst-lst (last lst)]
+                     (cond
+                       (= (inc lst-lst) x) (conj (vec (butlast xs)) [(first lst) x])
+                       (= lst-lst x) xs
+                       :else (conj (vec  xs) [x x])))))) [] (sort xs))) [1 1 1 1 1 1 1])
+
+
+
+;; (take 2 ((fn m[y]
+;;            (let [ x (map #(Integer/parseInt (str %)) (str y))
+;;                  cnt (count x)
+;;                  mid-cnt (quot cnt 2)
+;;                  [s1 s2] (split-at mid-cnt x)
+;;                   s3 (split-at 1 s2)
+;;                  mid (nth x mid-cnt )
+;;                  nxtMid  (inc (Integer/parseInt (str mid)))
+;;                  nxt  nxtMid]
+;;              (lazy-seq (cons y (m nxt))))) 171))
+
+;; 150
+
+
+(take 26 ((fn m [x]
+            (let [y (str x)
+                  cnt (count y)
+                  half (quot cnt 2)
+                  inc-val (cond
+                            (every? #(= % \9) y) 2
+                            (even? cnt) (*  11 (int (Math/pow 10 (dec half))))
+                            :else  (int (Math/pow 10 half)))
+
+                  nxt  (+ x inc-val)]
+              (lazy-seq (cons x (m nxt))))) 0))
+
+((fn [n]))
+
+(first 
+ (take 1
+       (drop-while #(< (last %) 15)   ((fn k [prev]
+                                         (let [n (last prev)
+                                               nxt (if (= n 2) 3
+                                                       (loop [nxt (+ n 2)]
+                                                         (if (every? #(not= 0 (rem  nxt %)) prev)
+                                                           nxt
+                                                           (recur (+ nxt 2)))))]
+                                           (lazy-seq (cons prev (k (conj prev nxt))))))  [2]))))
+
