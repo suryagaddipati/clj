@@ -451,73 +451,98 @@
 ;; 150
 
 
-(take 26 ((fn m [x]
-            (let [y (str x)
-                  cnt (count y)
-                  half (quot cnt 2)
-                  inc-val (cond
-                            (every? #(= % \9) y) 2
-                            (even? cnt) (*  11 (int (Math/pow 10 (dec half))))
-                            :else  (int (Math/pow 10 half)))
+(take 10
+      ((fn [n]
+         (let [
+               y (str n)
+               fst (if (< n 100) 0 (Integer/parseInt (clojure.string/join (repeat  (dec (count y)) \9))))
+               pali (fn m [x]
+                      (let [
+                            cnt (count y)
+                            half (quot cnt 2)
+                            inc-val (cond
+                                      (every? #(= % \9) y) 2
+                                      (= \9 (last (butlast y))) 11
+                                      (even? cnt) (*  11 (int (Math/pow 10 (dec half))))
+                                      :else  (int (Math/pow 10 half)))
 
-                  nxt  (+ x inc-val)]
-              (lazy-seq (cons x (m nxt))))) 0))
+                            nxt  (+ x inc-val)]
+                        (lazy-seq (cons x (m nxt)))))
+               lst  (last (take-while #(<  % n) (pali 0)))
+               lst   (if (nil? lst)  0 lst)
+               lst-pali (pali lst)
+               ]
+          ;; (if (= lst n) lst-pali (rest lst-pali))
+           (pali (* 111111111 111111111) )
+          )) (* 11 11)))
+
+(take-while #(< % 50) ((fn m [x]
+                         (let [y (str x)
+                               cnt (count y)
+                               half (quot cnt 2)
+                               inc-val (cond
+                                         (every? #(= % \9) y) 2
+                                         (even? cnt) (*  11 (int (Math/pow 10 (dec half))))
+                                         :else  (int (Math/pow 10 half)))
+
+                               nxt  (+ x inc-val)]
+                           (lazy-seq (cons x (m nxt))))) 0))
 
 ((fn [n]
    (let [lst3 (take-last 3
-                             (first
-                              (take 1
-                                    (drop-while #(<= (last %) n)
-                                                ((fn k [prev]
-                                                   (let [n (last prev)
-                                                         nxt (if (= n 2) 3
-                                                                 (loop [nxt (+ n 2)]
-                                                                   (if (every? #(not= 0 (rem  nxt %)) prev)
-                                                                     nxt
-                                                                     (recur (+ nxt 2)))))]
-                                                     (lazy-seq (cons prev (k (conj prev nxt))))))  [2])))))]
-     (if (= (second lst3 ) n) (= (second lst3) (/ (+ (first lst3) (last lst3)) 2))  false))) 5)
+                         (first
+                          (take 1
+                                (drop-while #(<= (last %) n)
+                                            ((fn k [prev]
+                                               (let [n (last prev)
+                                                     nxt (if (= n 2) 3
+                                                             (loop [nxt (+ n 2)]
+                                                               (if (every? #(not= 0 (rem  nxt %)) prev)
+                                                                 nxt
+                                                                 (recur (+ nxt 2)))))]
+                                                 (lazy-seq (cons prev (k (conj prev nxt))))))  [2])))))]
+     (if (= (second lst3) n) (= (second lst3) (/ (+ (first lst3) (last lst3)) 2))  false))) 5)
 
-((fn[xs]
+((fn [xs]
    (reduce (fn [xs s] (assoc xs (first s) (rest s))) {}
-    (reduce #(if (keyword %2)
-               (conj (vec %1) [%2]) (let [lst (last %1)
-                                          bt-lst(butlast %1)]
-                                      (conj (vec bt-lst) (conj lst %2)))) [] xs)))
+           (reduce #(if (keyword %2)
+                      (conj (vec %1) [%2]) (let [lst (last %1)
+                                                 bt-lst (butlast %1)]
+                                             (conj (vec bt-lst) (conj lst %2)))) [] xs)))
  [:a 1 2 3 :b :c 4])
 
-((fn k[xs]
+((fn k [xs]
    (reduce #(if (sequential? (first %2))
               (into %1 (k %2))
               (conj %1 %2)) [] xs))  [[[[:a :b]]] [[:c :d]] [:e :f]])
 
-((fn k[n]
-   (let [rep (fn[s n] (clojure.string/join(repeat n s)))]
+((fn k [n]
+   (let [rep (fn [s n] (clojure.string/join (repeat n s)))]
      (loop [n n
             out ""]
        (cond
 
-         (>  (quot n 1000) 0) (recur (rem n 1000)(str out (rep "M" (quot n 1000)) ))
-         (>  (quot n 100) 0) (recur (rem n 100)(str out (case (quot n 100)
-                                                         1 "C"
-                                                         2  "CC"
-                                                         3 "CCC"
-                                                         4 "CD"
-                                                         5 "D"
-                                                         6 "DC"
-                                                         7 "DCC"
-                                                         8 "DCCC"
-                                                         9 "CM") ))
-         (>  (quot n 10) 0) (recur (rem n 10 )(str out (case (quot n 10)
+         (>  (quot n 1000) 0) (recur (rem n 1000) (str out (rep "M" (quot n 1000))))
+         (>  (quot n 100) 0) (recur (rem n 100) (str out (case (quot n 100)
+                                                           1 "C"
+                                                           2  "CC"
+                                                           3 "CCC"
+                                                           4 "CD"
+                                                           5 "D"
+                                                           6 "DC"
+                                                           7 "DCC"
+                                                           8 "DCCC"
+                                                           9 "CM")))
+         (>  (quot n 10) 0) (recur (rem n 10) (str out (case (quot n 10)
                                                          1 "X"
                                                          2  "XX"
                                                          3 "XXX"
-                                                         4 "XL"
+                                                        4 "XL"
                                                          5 "L"
                                                          6 "LX"
                                                          7 "LXX"
                                                          8 "LXXX"
-                                                         9 "XC") ))
+                                                         9 "XC")))
          (< n 10) (str out (case n
                              0 ""
                              1 "I"
@@ -528,5 +553,42 @@
                              6 "VI"
                              7 "VII"
                              8 "VIII"
-                             9 "IX"))
-         )))) 3999)
+                             9 "IX")))))) 3999)
+
+((fn k [n xs]
+   (if (= n 1)  (reduce #(conj %1 #{%2}) #{} xs)
+       (let [prv  (k (dec n) xs)
+             into-prv (fn [r] (reduce (fn [xs x] (conj xs (conj x r))) #{} prv))]
+         (set
+          (filter #(= (count %) n)
+                  (reduce (fn [xs x] (into xs (into-prv x))) #{} xs))))))  10 #{0 1 2})
+
+((fn [n x y]
+   (letfn [(nums [a]  (take-while #(< % n) (map #(* % a) (range))))]
+     (reduce + 0 (concat (nums x) (nums y))))) 10 3 5)
+
+((fn [n x y]
+   (letfn [(sums [a]
+             (let [q (quot (dec n) a)
+                   qt-sum (quot  (*' q (inc q)) 2)]
+               (*' qt-sum a)))] (-' (+' (sums x) (sums y)) (sums (*' x y))))) 1000 3 5)
+
+((fn [x]
+   (let [ini-count (count x)
+         x (conj (conj (conj x {:a :b}) {:c :d}) {:c :d})]
+     (cond
+       (not (nil? (:a x))) :map
+       (= (count x) (+ ini-count 2)) :set
+       (= (first  x) {:c :d}) :list
+       :else :vector))) [1 2 3 4 5 6])
+
+( (fn [n]
+    (let [to-int #(Integer/parseInt %)
+          pali  (fn k[x]
+                  (cond
+                    (= x 1) (range 10)
+                    (= x 2) (let [one (rest (k 1))] (map #(to-int (str %1 %2)) one one))
+                    :else (let [prv (k (- x 2))](reduce  (fn [ys y]
+                                                           (into ys  (map #(to-int (str y % y )) prv))) [] (rest (k 1)) ))
+                    ))]
+      (pali 4))) 4)
