@@ -582,13 +582,15 @@
        (= (first  x) {:c :d}) :list
        :else :vector))) [1 2 3 4 5 6])
 
-( (fn [n]
-    (let [to-int #(Integer/parseInt %)
-          pali  (fn k[x]
-                  (cond
-                    (= x 1) (range 10)
-                    (= x 2) (let [one (rest (k 1))] (map #(to-int (str %1 %2)) one one))
-                    :else (let [prv (k (- x 2))](reduce  (fn [ys y]
-                                                           (into ys  (map #(to-int (str y % y )) prv))) [] (rest (k 1)) ))
-                    ))]
-      (pali 4))) 4)
+(nth 
+      ( (fn [n]
+             (let [to-int #(Long/parseLong %)
+                   pali  (fn k[x fst]
+                           (cond
+                             (= x 1) (range 10)
+                             (= x 2) (let [one (k 1 false)] (map #(to-int (str %1 %2)) one one))
+                             :else (let [prv (k (- x 2) false)](reduce  (fn [ys y]
+                                                                          (into ys  (map #(to-int (str y % y )) prv))) []  (if first  (rest (k 1 true)) (k 1 false)) ))
+                             ))
+                   palis (fn t[x](lazy-seq (concat   (filter #(<= n %)(pali x true)) (t (inc x))  )) )]
+               (palis (count (str n))))) 0 ) 10101)
