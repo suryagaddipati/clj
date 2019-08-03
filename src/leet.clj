@@ -34,7 +34,7 @@
 ;40
 
 ((fn ki [xs n]
-   (let [ all-sets 
+   (let [ all-sets
          (if (or (<= n 0) (empty? xs))
            #{}
            (let [ fst (first xs)
@@ -48,4 +48,20 @@
                       #{}  f-sets
                       ))
            )] (reduce conj #{} all-sets))
-   )(sort [10,1,2,7,6,1,5])  8)
+   )(sort [2,5,2,1,2] )  5)
+
+;238
+( (fn [xs]
+    (let [left-sum (fn [xs] (reduce (fn [xs x]
+                                      (let [lst  (if (empty? xs) [1 1] (last xs))]
+                                        (conj xs [(* (first lst) (last lst)) x])
+                                        )) [] xs))
+          left (left-sum xs)
+          right (reverse (left-sum (reverse xs)))]
+      (map #(* (first %1)(first %2)) left right))
+    ) [1 2 3 4])
+()
+
+
+
+
