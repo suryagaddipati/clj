@@ -8,7 +8,12 @@
 
 (defn repeat-till[x n] (take-while #(<= (sum %) n) (map #(repeat % x)(range))))
 
-;227
+(defn rotate
+  ([xs] (conj (vec (rest xs)) (first xs)))
+  ([xs n] (reduce (fn[xs x](conj xs (rotate (last xs)))) [xs](range 1 n)))
+  )
+
+;qs-227
 ((fn k[x]
    (let [split (fn[x, y]  (map str/trim (clojure.string/split x (Pattern/compile y Pattern/LITERAL))))]
      (cond
@@ -17,7 +22,7 @@
            (str/includes? x "/") (reduce #(quot (k %1) (k %2) )  (split x "/"))
            :else (Integer/parseInt x)))) "3 / 2 *3")
 
-; 39
+;qs-39
 ((fn ki [xs n]
    (if (or (= n 0) (empty? xs))
      []
@@ -34,8 +39,7 @@
    ) [2 3 6 7 ] 7)
 
 
-;40
-
+;qs-40
 ((fn ki [xs n]
    (let [ all-sets
          (if (or (<= n 0) (empty? xs))
@@ -53,7 +57,7 @@
            )] (reduce conj #{} all-sets))
    )(sort [2,5,2,1,2] )  5)
 
-;238
+;qs-238
 ( (fn [xs]
     (let [left-sum (fn [xs] (reduce (fn [xs x]
                                       (let [lst  (if (empty? xs) [1 1] (last xs))]
@@ -63,13 +67,8 @@
           right (reverse (left-sum (reverse xs)))]
       (map #(* (first %1)(first %2)) left right))
     ) [1 2 3 4])
-;; (rotate (last %1))
-(defn rotate
-  ([xs] (conj (vec (rest xs)) (first xs)))
-  ([xs n] (reduce (fn[xs x](conj xs (rotate (last xs)))) [xs](range 1 n)))
-  )
 
-;46
+;qs-46
 ((fn k[xs ]
    (if (= 1 (count xs)) [ xs]
        (let [rots (rotate xs (count xs))]
@@ -82,5 +81,3 @@
                      (concat xs fcombs)
                      ))  [] rots)))) [1,2,3])
 
-
-;;
