@@ -2,6 +2,13 @@
   (:require [clojure.string :as str]))
 (import 'java.util.regex.Pattern)
 
+;util
+(defn pp[x] (do (print x) x))
+(defn sum [xs] (reduce + xs))
+
+(defn repeat-till[x n] (take-while #(<= (sum %) n) (map #(repeat % x)(range))))
+
+;227
 ((fn k[x]
    (let [split (fn[x, y]  (map str/trim (clojure.string/split x (Pattern/compile y Pattern/LITERAL))))]
      (cond
@@ -10,10 +17,6 @@
            (str/includes? x "/") (reduce #(quot (k %1) (k %2) )  (split x "/"))
            :else (Integer/parseInt x)))) "3 / 2 *3")
 
-(defn pp[x] (do (print x) x))
-(defn sum [xs] (reduce + xs))
-
-(defn repeat-till[x n] (take-while #(<= (sum %) n) (map #(repeat % x)(range))))
 ; 39
 ((fn ki [xs n]
    (if (or (= n 0) (empty? xs))
@@ -60,8 +63,23 @@
           right (reverse (left-sum (reverse xs)))]
       (map #(* (first %1)(first %2)) left right))
     ) [1 2 3 4])
-()
+;; (rotate (last %1))
+(defn rotate
+  ([xs] (conj (vec (rest xs)) (first xs)))
+  ([xs n] (reduce (fn[xs x](conj xs (rotate (last xs)))) [xs](range 1 n)))
+  )
 
-
+;46
+((fn k[xs ]
+   (if (= 1 (count xs)) [ xs]
+       (let [rots (rotate xs (count xs))]
+         (reduce (fn [xs x]
+                   (let [fst (first x)
+                         rst (rest x)
+                         rst-combs (k rst)
+                         fcombs (map #(conj % fst) rst-combs)
+                         ]
+                     (concat xs fcombs)
+                     ))  [] rots)))) [1,2,3])
 
 
