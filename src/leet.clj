@@ -79,5 +79,15 @@
                          fcombs (map #(conj % fst) rst-combs)
                          ]
                      (concat xs fcombs)
-                     ))  [] rots)))) [1,2,3])
+                     ))  [] rots)))) [1,1,2])
 
+;qs-64
+(  (fn k
+     ([xs] (k xs 0))
+     ([xs n]
+      (map rest (rest xs))))
+ [
+              [1,3,1],
+              [1,5,1],
+              [4,2,1]
+              ])
