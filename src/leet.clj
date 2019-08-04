@@ -93,3 +93,43 @@
  [[1,3,1],
   [1,5,1],
   [4,2,1]])
+
+;qs-79
+
+((fn k ([xs x](k xs x [[0 0]]))
+  ([xs x pxs]
+   (let [ m (count xs)
+          n (count (first xs))
+
+         neighbors #(let [x (first %)
+                          y (second %)
+                          x+ (inc x)
+                          x- (dec x)
+                          y+ (inc y)
+                          y- (dec y)]
+                      (reduce (fn [ks k]
+                                (cond
+                                    (= k 0) (if (>= x- 0) (conj ks [x- y]) ks)
+                                    (= k 1) (if (>= y- 0) (conj ks [x y-]) ks)
+                                    (= k 2) (if (< x+ n) (conj ks [x+ y]) ks)
+                                    (= k 3) (if (< y+ m) (conj ks [x y+]) ks)
+                                    )) [] (range 4)))
+         at-pos #(nth (nth xs (first %)) (second %))
+
+         next-neighbors (reduce  #(if (= (first x)(at-pos %2) ) (concat %1 (neighbors %2)) %1)   [] pxs)
+         ;; next-neighbors (reduce  conj   [] pxs)
+
+         ]
+       next-neighbors
+       ;; (neighbors (first pxs))
+       )
+   ))
+ [
+  [\A \B \C \E]
+  [\S \F \C \S]
+  [\A \D \E \E]
+  ]
+ "ABCCED")
+
+
+(+ 1 2)
