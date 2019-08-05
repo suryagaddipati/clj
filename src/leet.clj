@@ -144,3 +144,26 @@
   [\S \F \C \S]
   [\A \D \E \E]]
  "ABFDEX")
+
+(defn split-half [xs] (split-at (quot (count xs) 2) xs))
+(defn middle [xs] (nth  xs (quot (count xs) 2)))
+(defn with-idx [xs] (map-indexed #(identity [%1 %2]) xs))
+(defn all= [x & xs] (every? #(= x %) xs))
+;qs-35
+((fn k [xs n]
+   (cond
+     (empty? xs) [-1 -1]
+     (= 1 (count xs)) (let [[i j] (first xs)]
+                        (if (= n j) [i i] [-1 -1]))
+     :else (let [[lhalf rhalf] (split-half xs)
+                 [mid-i mid] (middle xs)]
+             (cond
+               (= n mid) (let [[li _] (k lhalf n)
+                               [_ rj] (k rhalf n)]
+                           (cond
+                             (all= -1 li rj) [mid-i mid-i]
+                             (= li -1) [mid-i rj]
+                             (= rj -1) [li mid-i]
+                             :else [li rj]))
+               (< n mid) (k lhalf n)
+               (> n mid) (k rhalf n))))) (with-idx [5,7,7,8,8,10]) 8)
