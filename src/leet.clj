@@ -1,5 +1,6 @@
 (ns leet
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str])
+  (:require [clojure.spec.alpha :as s]))
 (import 'java.util.regex.Pattern)
 
 ;util
@@ -88,48 +89,58 @@
         (nil? fst) n
         (every? empty? left) (dbottom)
         (every? empty? bottom) (dleft)
-        :else (if (< (dbottom) (dleft)) (dbottom) (dleft))
-        ))))
+        :else (if (< (dbottom) (dleft)) (dbottom) (dleft))))))
  [[1,3,1],
   [1,5,1],
   [4,2,1]])
 
+(defn matrix-size [matrix]
+  [(count matrix)
+   (count (first matrix))])
+
+(defn neighbors [matrix pair visited]
+  (let [[m n] (matrix-size matrix)
+        [x y] pair
+        x+ (inc x)
+        x- (dec x)
+        y+ (inc y)
+        y- (dec y)]
+    (remove #(contains? visited %)
+            (reduce (fn [ks k]
+                      (cond
+                        (= k 0) (if (>= x- 0) (conj ks [x- y]) ks)
+                        (= k 1) (if (>= y- 0) (conj ks [x y-]) ks)
+                        (= k 2) (if (< x+ m) (conj ks [x+ y]) ks)
+                        (= k 3) (if (< y+ n) (conj ks [x y+]) ks))) [] (range 4)))))
+
+(s/def ::matrix-pair
+  (fn [matrix-pair]
+    (let [[matrix pair] matrix-pair
+          [m n]  (matrix-size matrix)
+          [x y]  pair] (and (< x m) (< y n)))))
+
+(s/check-asserts true)
+
+(defn at-pos [matrix pair]
+  (s/assert ::matrix-pair [matrix  pair])
+  (nth (nth matrix (first pair)) (second pair)))
+
 ;qs-79
-
-((fn k ([xs x](k xs x [[0 0]]))
-  ([xs x pxs]
-   (let [ m (count xs)
-          n (count (first xs))
-
-         neighbors #(let [x (first %)
-                          y (second %)
-                          x+ (inc x)
-                          x- (dec x)
-                          y+ (inc y)
-                          y- (dec y)]
-                      (reduce (fn [ks k]
-                                (cond
-                                    (= k 0) (if (>= x- 0) (conj ks [x- y]) ks)
-                                    (= k 1) (if (>= y- 0) (conj ks [x y-]) ks)
-                                    (= k 2) (if (< x+ n) (conj ks [x+ y]) ks)
-                                    (= k 3) (if (< y+ m) (conj ks [x y+]) ks)
-                                    )) [] (range 4)))
-         at-pos #(nth (nth xs (first %)) (second %))
-
-         next-neighbors (reduce  #(if (= (first x)(at-pos %2) ) (concat %1 (neighbors %2)) %1)   [] pxs)
-         ;; next-neighbors (reduce  conj   [] pxs)
-
-         ]
-       next-neighbors
-       ;; (neighbors (first pxs))
-       )
-   ))
- [
-  [\A \B \C \E]
+((fn k
+   ([xs x]
+    (k xs x [[0 0]] #{}))
+   ([xs x pxs visited]
+    (let [next-neighbors (reduce  (fn [[js visited] j]
+                                    (if (= (first x) (at-pos xs j))
+                                      [(concat js (neighbors xs j visited)) (conj visited j)]
+                                      [js visited]))
+                                  [[] visited]
+                                  pxs)]
+      (cond
+        (empty? x) true
+        (empty? (first next-neighbors)) false
+        :else  (k xs (rest x) (first next-neighbors) (second next-neighbors))))))
+ [[\A \B \C \E]
   [\S \F \C \S]
-  [\A \D \E \E]
-  ]
- "ABCCED")
-
-
-(+ 1 2)
+  [\A \D \E \E]]
+ "ABFDEX")
