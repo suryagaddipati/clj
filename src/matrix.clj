@@ -1,5 +1,6 @@
 (ns matrix
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s])
+  (:require [vector :as v]))
 
 (defn size [matrix]
   "[rows * cols]"
@@ -33,3 +34,18 @@
     (let [[matrix pair] matrix-pair
           [m n]  (size matrix)
           [x y]  pair] (and (< x m) (< y n)))))
+
+(defn rows [xs] xs)
+
+(defn cols [xs]
+  (if (v/empty? xs)
+    nil
+    (into [(map first xs)] (cols (map rest xs)))))
+
+(defn with-index [xs]
+  "([[m-idx n-idx] el] ...)"
+  (reduce  (fn [xs x]
+             (let [[idx-x ys] x]
+               (concat xs (map #(let [[idx-y el] %] [[idx-x idx-y] el])  (v/with-index ys)))))
+           []
+           (v/with-index xs)))

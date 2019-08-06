@@ -1,5 +1,6 @@
 (ns leet
   (:require [clojure.string :as str])
+  (:require [vector :as v])
   (:require [matrix :as m]))
 (import 'java.util.regex.Pattern)
 
@@ -15,6 +16,8 @@
 
 
 ;qs-227
+
+
 ((fn k [x]
    (let [split (fn [x, y]  (map str/trim (clojure.string/split x (Pattern/compile y Pattern/LITERAL))))]
      (cond
@@ -39,6 +42,8 @@
 
 
 ;qs-40
+
+
 ((fn ki [xs n]
    (let [all-sets
          (if (or (<= n 0) (empty? xs))
@@ -113,7 +118,6 @@
 
 (defn split-half [xs] (split-at (quot (count xs) 2) xs))
 (defn middle [xs] (nth  xs (quot (count xs) 2)))
-(defn with-idx [xs] (map-indexed #(identity [%1 %2]) xs))
 (defn all= [x & xs] (every? #(= x %) xs))
 
 ;qs-35
@@ -133,4 +137,19 @@
                              (= rj -1) [li mid-i]
                              :else [li rj]))
                (< n mid) (k lhalf n)
-               (> n mid) (k rhalf n))))) (with-idx [5,7,7,8,8,10]) 8)
+               (> n mid) (k rhalf n))))) (v/with-index [5,7,7,8,8,10]) 8)
+
+
+;qs-807
+((fn [xs]
+   (let [m-maxs  (map v/max (m/rows xs))
+         n-maxs  (map v/max (m/cols xs))]
+     (reduce (fn [xs [[m-idx n-idx] el]]
+               (let [m-max (nth m-maxs m-idx)
+                     n-max (nth n-maxs n-idx)
+                     mn-max (min n-max m-max)]
+                 (+ xs  (- mn-max el)))) 0 (m/with-index xs))))
+ [[3, 0, 8, 4],
+  [2, 4, 5, 7],
+  [9, 2, 6, 3],
+  [0, 3, 1, 0]])
