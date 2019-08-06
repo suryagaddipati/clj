@@ -1,6 +1,6 @@
 (ns leet
   (:require [clojure.string :as str])
-  (:require [clojure.spec.alpha :as s]))
+  (:require [matrix :as m]))
 (import 'java.util.regex.Pattern)
 
 ;util
@@ -13,9 +13,8 @@
   ([xs] (conj (vec (rest xs)) (first xs)))
   ([xs n] (reduce (fn [xs x] (conj xs (rotate (last xs)))) [xs] (range 1 n))))
 
+
 ;qs-227
-
-
 ((fn k [x]
    (let [split (fn [x, y]  (map str/trim (clojure.string/split x (Pattern/compile y Pattern/LITERAL))))]
      (cond
@@ -40,8 +39,6 @@
 
 
 ;qs-40
-
-
 ((fn ki [xs n]
    (let [all-sets
          (if (or (<= n 0) (empty? xs))
@@ -94,45 +91,14 @@
   [1,5,1],
   [4,2,1]])
 
-(defn matrix-size [matrix]
-  [(count matrix)
-   (count (first matrix))])
-
-(defn neighbors [matrix pair visited]
-  (let [[m n] (matrix-size matrix)
-        [x y] pair
-        x+ (inc x)
-        x- (dec x)
-        y+ (inc y)
-        y- (dec y)]
-    (remove #(contains? visited %)
-            (reduce (fn [ks k]
-                      (cond
-                        (= k 0) (if (>= x- 0) (conj ks [x- y]) ks)
-                        (= k 1) (if (>= y- 0) (conj ks [x y-]) ks)
-                        (= k 2) (if (< x+ m) (conj ks [x+ y]) ks)
-                        (= k 3) (if (< y+ n) (conj ks [x y+]) ks))) [] (range 4)))))
-
-(s/def ::matrix-pair
-  (fn [matrix-pair]
-    (let [[matrix pair] matrix-pair
-          [m n]  (matrix-size matrix)
-          [x y]  pair] (and (< x m) (< y n)))))
-
-(s/check-asserts true)
-
-(defn at-pos [matrix pair]
-  (s/assert ::matrix-pair [matrix  pair])
-  (nth (nth matrix (first pair)) (second pair)))
-
 ;qs-79
 ((fn k
    ([xs x]
     (k xs x [[0 0]] #{}))
    ([xs x pxs visited]
     (let [next-neighbors (reduce  (fn [[js visited] j]
-                                    (if (= (first x) (at-pos xs j))
-                                      [(concat js (neighbors xs j visited)) (conj visited j)]
+                                    (if (= (first x) (m/at-pos xs j))
+                                      [(concat js (m/neighbors xs j visited)) (conj visited j)]
                                       [js visited]))
                                   [[] visited]
                                   pxs)]
@@ -149,6 +115,7 @@
 (defn middle [xs] (nth  xs (quot (count xs) 2)))
 (defn with-idx [xs] (map-indexed #(identity [%1 %2]) xs))
 (defn all= [x & xs] (every? #(= x %) xs))
+
 ;qs-35
 ((fn k [xs n]
    (cond
