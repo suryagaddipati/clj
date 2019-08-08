@@ -168,3 +168,9 @@
                                  (map #(+ product %) (flatten  k-except))) k-excepts products)]
                  kk)))]
      (v/max (flatten (k xs))))) [3,1,5,8])
+
+;qs-907
+
+((fn[xs]
+   (let [cw (v/contigous-windows xs)]
+    (reduce #(+ %1 (v/min %2 )) 0 cw)  ))[3,1,2,4])
