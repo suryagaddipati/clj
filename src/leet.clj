@@ -170,7 +170,23 @@
      (v/max (flatten (k xs))))) [3,1,5,8])
 
 ;qs-907
-
-((fn[xs]
+((fn [xs]
    (let [cw (v/contigous-windows xs)]
-    (reduce #(+ %1 (v/min %2 )) 0 cw)  ))[3,1,2,4])
+     (reduce #(+ %1 (v/min %2)) 0 cw))) [3,1,2,4])
+
+
+;qs-457
+((fn [xs]
+   (letfn [(is-cycle [start path]
+             (let [xs-len (count xs)
+                   [idx val] start
+                   next-idx  (mod  (+ idx val xs-len) xs-len)
+                   next-val (nth xs next-idx)
+                   path (conj path idx)]
+               (if (contains? path next-idx)
+                 path
+                 (is-cycle next-val path))))] (is-cycle (first xs) #{}))) (v/with-index [-2,1,-1,-2,-2] ))
+;qs-90
+((fn [xs]
+   (set (reduce #( concat %1 (for [y  %1 ] (conj y %2) ))
+                #{[]} xs ))) [1,2,2])
