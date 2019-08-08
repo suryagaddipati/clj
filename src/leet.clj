@@ -141,6 +141,8 @@
 
 
 ;qs-807
+
+
 ((fn [xs]
    (let [m-maxs  (map v/max (m/rows xs))
          n-maxs  (map v/max (m/cols xs))]
@@ -153,3 +155,16 @@
   [2, 4, 5, 7],
   [9, 2, 6, 3],
   [0, 3, 1, 0]])
+
+;qs-312
+((fn [xs]
+   (letfn [(k [xs]
+             (if (= 1 (count xs))
+               xs
+               (let [products (map v/* (partition 3 1 (concat [1] xs [1])))
+                     excepts (v/except xs)
+                     k-excepts (map k excepts)
+                     kk (map   (fn [k-except product]
+                                 (map #(+ product %) (flatten  k-except))) k-excepts products)]
+                 kk)))]
+     (v/max (flatten (k xs))))) [3,1,5,8])
