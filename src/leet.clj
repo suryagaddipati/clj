@@ -176,6 +176,8 @@
 
 
 ;qs-457
+
+
 ((fn [xs]
    (letfn [(is-cycle [start path]
              (let [xs-len (count xs)
@@ -185,8 +187,19 @@
                    path (conj path idx)]
                (if (contains? path next-idx)
                  path
-                 (is-cycle next-val path))))] (is-cycle (first xs) #{}))) (v/with-index [-2,1,-1,-2,-2] ))
+                 (is-cycle next-val path))))] (is-cycle (first xs) #{}))) (v/with-index [-2,1,-1,-2,-2]))
 ;qs-90
 ((fn [xs]
-   (set (reduce #( concat %1 (for [y  %1 ] (conj y %2) ))
-                #{[]} xs ))) [1,2,2])
+   (set (reduce #(concat %1 (for [y  %1] (conj y %2)))
+                #{[]} xs))) [1,2,2])
+
+;qs-187
+((fn [xs]
+   (let [wins (map clojure.string/join (first (v/windows xs 10  10)))]
+     (second
+      (reduce #(let [[set out] %1
+                     out (if (contains? set %2) (conj out %2) out)
+                     set (conj set %2)] [set out])
+              [#{} []]
+              wins))))
+ (vec "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"))
