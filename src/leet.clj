@@ -202,4 +202,11 @@
                      set (conj set %2)] [set out])
               [#{} []]
               wins))))
+
  (vec "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"))
+
+;qs-96
+
+((fn k[n]
+   (if (= n 0) 1
+       (reduce #(+ %1 (* (k(dec  %2)) (k (- n %2))) )  0 (range 1 (inc n)) ))) 3)
