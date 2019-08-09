@@ -209,3 +209,11 @@
 ((fn k[n]
    (if (= n 0) 1
        (reduce #(+ %1 (* (k %2) (k (- n (inc %2)))))  0 (range n)))) 3)
+
+;qs-199
+((fn [xs]
+   (let [xs  (v/with-index xs)]
+     (loop [ out []
+            idx 0]
+       (if (>= idx (count xs)) (map second out)
+           (recur (conj out (nth xs idx) ) (+ (* idx 2) 2) ))))) [1,2,3,nil,5,nil,4])
