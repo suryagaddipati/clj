@@ -22,18 +22,10 @@
       xs
       (conj out (into pxs xs))) )))
 
-(defn contigous-windows[xs]
-  (if (empty? xs) []
-      (let [windows (loop [n  1
-                           xs xs
-                           out [[(first xs)]]]
-                      (if (=  n (count xs)) out
-                          (let [[y & ys] xs
-                                win (first (split-at n ys))
-                                y+win (concat [y] win)
-                                ] (recur (inc n) xs (conj out y+win))
 
-                               )))
-            nxt-windows (contigous-windows (rest xs)) ]
-        (concat windows nxt-windows) )))
-
+(defn windows [col]
+  (for [s (range 1 (inc  (count col)))]
+    (loop [wins []
+           xs col]
+      (if (< (count xs) s) wins
+          (recur (conj wins (subvec xs 0 s)) (subvec xs 1))))))

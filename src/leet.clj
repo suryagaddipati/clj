@@ -171,7 +171,7 @@
 
 ;qs-907
 ((fn [xs]
-   (let [cw (v/contigous-windows xs)]
+   (let [cw (reduce concat (v/windows xs))]
      (reduce #(+ %1 (v/min %2)) 0 cw))) [3,1,2,4])
 
 
