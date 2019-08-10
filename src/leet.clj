@@ -229,3 +229,13 @@
           path [key]]
      (let [[nmap fst] (mp/first-get-remove map key) ]
        (if (nil? fst) path (recur nmap fst (conj path fst)))))) [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
+
+;qs-221
+
+((fn[xs]
+   (m/sub-matrix xs [0 0] 2 2 + 0))
+
+          [[1 0 1 0 0]
+           [1 0 1 1 1]
+           [1 1 1 1 1]
+           [1 0 0 1 0]] )
