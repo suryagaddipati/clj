@@ -231,11 +231,13 @@
        (if (nil? fst) path (recur nmap fst (conj path fst)))))) [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
 
 ;qs-221
-
 ((fn[xs]
-   (m/sub-matrix xs [0 0] 2 2 + 0))
-
-          [[1 0 1 0 0]
-           [1 0 1 1 1]
+   (let [sizes (reverse (for [s (range (v/min (m/size xs)))]
+                          [(inc s) (inc s)]))
+         all-idx (m/all-indexes xs)]
+     (m/reduce-sub-matrix xs [1 2] [2 2] #(and %1 (= 1 %2)) true)
+     ))     [[1 0 1 0 0]
+           [1 1 1 1 1]
            [1 1 1 1 1]
            [1 0 0 1 0]] )
+

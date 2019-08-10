@@ -54,22 +54,31 @@
            []
            (v/with-index xs)))
 
-;; (for [mi (range start-m-idx end-m-idx)]
-;;   (for [ni (range start-n-idx end-n-idx)](at-pos xs  [mi ni])))
 
-(defn sub-matrix [xs  start sub-m sub-n fn initial-val]
-  (if (or (= -1 sub-m) (= -1 sub-n)) [nil nil]
+(defn dec[[m-idx n-idx]][(clojure.core/dec m-idx) (clojure.core/dec n-idx)])
+(defn inc[[m-idx n-idx]][(clojure.core/inc m-idx) (clojure.core/inc n-idx)])
+
+(defn reduce-sub-matrix [xs  start sub-size fn initial-val]
+  (if (or (= 0 (first sub-size)) (= 0 (second sub-size))) initial-val
       (let [[m n] (size xs)
+            [sub-m sub-n] sub-size
             [start-m-idx start-n-idx] start
             end-m-idx (+ start-m-idx sub-m)
             end-n-idx (+ start-n-idx sub-n)]
         (if (or (> end-m-idx m) (> end-n-idx n))
-          nil
+nil
           (let [start-row (row xs start-m-idx)
                 start-col (col xs start-n-idx)
-                top-row (subvec start-row start-m-idx end-m-idx)
-                left-col (subvec start-col start-n-idx end-n-idx)
+                top-row (subvec start-row start-m-idx (dec end-n-idx))
+                left-col (subvec start-col start-n-idx end-m-idx)
                 reduce-top-row (reduce fn initial-val top-row)
                 reduce-left-row (reduce fn initial-val (rest left-col))]
-            (reduce fn initial-val [reduce-top-row reduce-left-row])
+            (reduce fn  (reduce-sub-matrix xs (inc start) (dec sub-size) fn initial-val) [reduce-top-row reduce-left-row])
             )))))
+
+(defn all-indexes [xs]
+  (apply concat
+         (let [[m n] (size xs)]
+           (for [mi (range m)]
+             (for [ni (range n)]
+               [mi ni])))) )
