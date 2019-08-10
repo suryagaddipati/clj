@@ -1,6 +1,7 @@
 (ns leet
   (:require [clojure.string :as str])
   (:require [vector :as v])
+  (:require [map :as mp])
   (:require [matrix :as m]))
 (import 'java.util.regex.Pattern)
 
@@ -217,3 +218,14 @@
             idx 0]
        (if (>= idx (count xs)) (map second out)
            (recur (conj out (nth xs idx) ) (+ (* idx 2) 2) ))))) [1,2,3,nil,5,nil,4])
+
+;qs-332 - Incomplete
+
+;["JFK","ATL","JFK","SFO","ATL","SFO"]
+;["JFK","SFO","ATL","JFK","ATL","SFO"] <--not
+((fn[xs]
+   (loop [map (mp/graph xs)
+          key "JFK"
+          path [key]]
+     (let [[nmap fst] (mp/first-get-remove map key) ]
+       (if (nil? fst) path (recur nmap fst (conj path fst)))))) [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
