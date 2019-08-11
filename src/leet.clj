@@ -246,3 +246,17 @@
    (reduce (fn[xs x](+ xs (v/to-int  (reverse x))) )
            0
            (t/all-paths (t/to-tree  xs)))) [4,9,0,5,1] )
+;qs-494
+((fn k[[x & xs] n]
+   (let [x+ x
+         x- (* -1 x)]
+     (if (empty? xs) (cond
+                       (= 0  (+ n x-)) [[x]]
+                       (= 0  (+ n x+ )) [[x-]]
+                       :else [])
+         (let [next+ (k xs (+ n x+))
+               next- (k xs (+ n x-))
+               next++  (map #(cons x- % ) next+)
+               next--  (map #(cons x+ % ) next-)
+               ]
+           (concat next++ next--))))) [1, 1, 1, 1, 1] 3)
