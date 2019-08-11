@@ -260,3 +260,14 @@
                next--  (map #(cons x+ % ) next-)
                ]
            (concat next++ next--))))) [1, 1, 1, 1, 1] 3)
+
+;qs-396
+(defn sum[xs i]
+  (let [len (count xs)]
+    (reduce (fn[sum [idx val]]
+              (+ sum  (* val (mod  (+ idx len i) len ))) ) 0 xs) ))
+((fn[xs]
+   (let [len (count xs)]
+     (v/max
+      (reduce (fn [ys y]
+                (conj ys (sum xs y) ))  [] (range len))))) (v/with-index [4, 3, 2, 6]))
