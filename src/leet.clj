@@ -2,6 +2,7 @@
   (:require [clojure.string :as str])
   (:require [vector :as v])
   (:require [map :as mp])
+  (:require [tree :as t])
   (:require [matrix :as m]))
 (import 'java.util.regex.Pattern)
 
@@ -207,37 +208,41 @@
  (vec "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"))
 
 ;qs-96
-((fn k[n]
+((fn k [n]
    (if (= n 0) 1
        (reduce #(+ %1 (* (k %2) (k (- n (inc %2)))))  0 (range n)))) 3)
 
 ;qs-199
 ((fn [xs]
    (let [xs  (v/with-index xs)]
-     (loop [ out []
+     (loop [out []
             idx 0]
        (if (>= idx (count xs)) (map second out)
-           (recur (conj out (nth xs idx) ) (+ (* idx 2) 2) ))))) [1,2,3,nil,5,nil,4])
+           (recur (conj out (nth xs idx)) (+ (* idx 2) 2)))))) [1,2,3,nil,5,nil,4])
 
 ;qs-332 - Incomplete
 
 ;["JFK","ATL","JFK","SFO","ATL","SFO"]
 ;["JFK","SFO","ATL","JFK","ATL","SFO"] <--not
-((fn[xs]
+((fn [xs]
    (loop [map (mp/graph xs)
           key "JFK"
           path [key]]
-     (let [[nmap fst] (mp/first-get-remove map key) ]
+     (let [[nmap fst] (mp/first-get-remove map key)]
        (if (nil? fst) path (recur nmap fst (conj path fst)))))) [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
 
-;qs-221
-((fn[xs]
+;qs-221 - Incomplete
+((fn [xs]
    (let [sizes (reverse (for [s (range (v/min (m/size xs)))]
                           [(inc s) (inc s)]))
          all-idx (m/all-indexes xs)]
-     (m/reduce-sub-matrix xs [1 2] [2 2] #(and %1 (= 1 %2)) true)
-     ))     [[1 0 1 0 0]
-           [1 1 1 1 1]
-           [1 1 1 1 1]
-           [1 0 0 1 0]] )
+     (m/reduce-sub-matrix xs [1 2] [2 2] #(and %1 (= 1 %2)) true)))     [[1 0 1 0 0]
+                                                                         [1 1 1 1 1]
+                                                                         [1 1 1 1 1]
+                                                                         [1 0 0 1 0]])
 
+;qs-129
+((fn [xs]
+   (reduce (fn[xs x](+ xs (v/to-int  (reverse x))) )
+           0
+           (t/all-paths (t/to-tree  xs)))) [4,9,0,5,1] )

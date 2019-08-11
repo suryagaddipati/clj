@@ -29,3 +29,7 @@
             xs xs]
        (if (< (count xs) s) wins
            (recur (conj wins (subvec xs 0 s)) (subvec xs 1)))))))
+
+(defn nth-or-nil[xs n](if (< n (count xs)) (nth xs n) nil ))
+
+(defn to-int[xs] (. Integer parseInt  (clojure.string/join xs))  )
