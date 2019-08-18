@@ -272,7 +272,7 @@
       (reduce (fn [ys y]
                 (conj ys (sum xs y) ))  [] (range len))))) (v/with-index [4, 3, 2, 6]))
 
-;qs-856
+;qs-856 - Incomplete
 ((fn k[s stack outs last-close]
    (if (every? empty? [s stack]) outs
        (let [ out (last outs)
@@ -283,4 +283,8 @@
            (= f \( ) (k rst   (conj stack f) (if last-close (conj outs 0) outs) false)
            (= lstack  \() (k rst (butlast stack) (v/replace-last outs (if (= 0 out) 1 (* 2 out)) ) true)
            :else  (k rst   (conj stack f) outs true)
-           )))) "(()(())" [] [0] false)
+           )))) "(()(()))" [] [0] false)
+
+;qs - 506
+((fn[m n N i j]
+   ) 2 2 2 0 0)

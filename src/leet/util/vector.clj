@@ -33,3 +33,6 @@
 (defn nth-or-nil[xs n](if (< n (count xs)) (nth xs n) nil ))
 
 (defn to-int[xs] (. Integer parseInt  (clojure.string/join xs))  )
+
+(defn replace-last[xs x](conj (vec (butlast xs)) x))
+
