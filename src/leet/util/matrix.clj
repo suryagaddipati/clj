@@ -11,16 +11,16 @@
   ([matrix pos ](neighbors matrix pos []))
   ([matrix pair visited] (neighbors-for-size (size matrix) pair visited)
    ))
-
+()
 (defn neighbors-for-size
-  ([size pos] (neighbors-for-size pos []))
+  ([size pos] (neighbors-for-size size pos []))
   ([size pos visited]
    (let [[m n] size
          [x y] pos
-         x+ (inc x)
-         x- (dec x)
-         y+ (inc y)
-         y- (dec y)]
+         x+ (clojure.core/inc x)
+         x- (clojure.core/dec x)
+         y+ (clojure.core/inc y)
+         y- (clojure.core/dec y)]
      (remove #(contains? visited %)
              (reduce (fn [ks k]
                        (cond

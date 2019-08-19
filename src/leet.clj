@@ -272,7 +272,7 @@
       (reduce (fn [ys y]
                 (conj ys (sum xs y) ))  [] (range len))))) (v/with-index [4, 3, 2, 6]))
 
-;qs-856
+;qs-856 Incomplete
 ((fn k[s stack outs last-close]
    (if (every? empty? [s stack]) outs
        (let [ out (last outs)
@@ -284,3 +284,32 @@
            (= lstack  \() (k rst (butlast stack) (v/replace-last outs (if (= 0 out) 1 (* 2 out)) ) true)
            :else  (k rst   (conj stack f) outs true)
            )))) "(()(())" [] [0] false)
+
+;qs-576
+(defn edges[size pos]
+   (let [ [m n] size
+          [i j] pos
+         m (dec m)
+         n (dec n)]
+     (cond
+       (and (= i 0) (= j 0) ) 2
+       (and (= i 0) (= j n) ) 2
+       (and (= i 0) (= i m) ) 2
+       (and (= j 0) (= j n) ) 2
+       (and (= i m) (= j 0) ) 2
+       (and (= i m) (= j n) ) 2
+       (= j 0) 1
+       (= j n) 1
+       (= i 0) 1
+       (= i m) 1
+       :else 0
+       )))
+
+((fn k[size N pos visited]
+   (if (= N 1) (edges size pos)
+       (let [neighbors (m/neighbors-for-size size pos visited)
+             neighbors (conj neighbors  pos)
+             visited (set (concat visited neighbors))]
+         (reduce (fn[xs x]
+                  (+ xs (k size (dec N) x visited )) )   0 neighbors))
+       )) [1 3] 3 [ 0 1] #{} )
