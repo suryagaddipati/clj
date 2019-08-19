@@ -288,11 +288,11 @@
 ;qs-576
 
 
-((fn k[size N pos visited]
+((fn k[size N pos ]
    (if (= N 1) (m/num-edges size pos)
-       (let [neighbors (m/neighbors-for-size size pos visited)
-             neighbors (conj neighbors  pos)
-             visited (set (concat visited neighbors))]
+       (let [neighbors (m/neighbors-for-size size pos )
+              current-neighbors (k size 1 pos)
+             ]
          (reduce (fn[xs x]
-                  (+ xs (k size (dec N) x visited )) )   0 neighbors))
-       )) [1 3] 3 [ 0 1] #{} )
+                  (+ xs (k size (dec N) x )) )   current-neighbors neighbors))
+       )) [1 3] 3 [ 0 1])
