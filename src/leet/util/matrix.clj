@@ -87,3 +87,22 @@
            (for [mi (range m)]
              (for [ni (range n)]
                [mi ni])))))
+
+(defn num-edges[size pos]
+  (let [ [m n] size
+        [i j] pos
+        m (clojure.core/dec m)
+        n (clojure.core/dec n)]
+    (cond
+      (and (= i 0) (= j 0) ) 2
+      (and (= i 0) (= j n) ) 2
+      (and (= i 0) (= i m) ) 2
+      (and (= j 0) (= j n) ) 2
+      (and (= i m) (= j 0) ) 2
+      (and (= i m) (= j n) ) 2
+      (= j 0) 1
+      (= j n) 1
+      (= i 0) 1
+      (= i m) 1
+      :else 0
+      )))

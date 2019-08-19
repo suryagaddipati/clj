@@ -286,27 +286,10 @@
            )))) "(()(())" [] [0] false)
 
 ;qs-576
-(defn edges[size pos]
-   (let [ [m n] size
-          [i j] pos
-         m (dec m)
-         n (dec n)]
-     (cond
-       (and (= i 0) (= j 0) ) 2
-       (and (= i 0) (= j n) ) 2
-       (and (= i 0) (= i m) ) 2
-       (and (= j 0) (= j n) ) 2
-       (and (= i m) (= j 0) ) 2
-       (and (= i m) (= j n) ) 2
-       (= j 0) 1
-       (= j n) 1
-       (= i 0) 1
-       (= i m) 1
-       :else 0
-       )))
+
 
 ((fn k[size N pos visited]
-   (if (= N 1) (edges size pos)
+   (if (= N 1) (m/num-edges size pos)
        (let [neighbors (m/neighbors-for-size size pos visited)
              neighbors (conj neighbors  pos)
              visited (set (concat visited neighbors))]
